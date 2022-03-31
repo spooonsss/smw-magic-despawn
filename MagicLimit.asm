@@ -1,4 +1,4 @@
-; MagicDespawn by spooonsss
+; MagicLimit by spooonsss
 ; Despawns the oldest magikoopa magic (or sprites they turn into)
 ; (Magics spawned at room load are not considered)
 ; Install as UberASM, but be aware it includes hijacks
