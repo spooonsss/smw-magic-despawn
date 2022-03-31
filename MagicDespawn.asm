@@ -5,12 +5,13 @@
 
 !max_magics = 3
 assert !max_magics >= 3
-!freeram = $0F5E ; at least !max_magics bytes, cannot include bank
-!bank1_empty = $01FFFC ; at least 4 bytes
+!freeram = $0F5E ; !max_magics bytes, cannot include bank
+!bank1_empty = $01FFFC ; 4 bytes
 
 ; end of configuration
 
 ; !freeram is list of sprite slots, oldest first. Empty slots are $FF
+!freeram #= !freeram|!addr
 
 pushpc
 org $01BF2D
@@ -38,8 +39,8 @@ RTL
 main:
 
 ; for debugging, make mario invincible:
-LDA #1
-STA $71
+; LDA #1
+; STA $71
 
 ; first, look for dead sprites and remove from !freeram list
 LDX #!max_magics-1
@@ -96,7 +97,7 @@ STZ !sprite_status,x
 
 LDY.b #$03
 .smoke_loop:
-LDA.w $17C0|!addr,Y
+LDA.w $17C0|!addr,y
 BEQ .glitter
 DEY
 BPL .smoke_loop
@@ -104,13 +105,13 @@ BRA .shift_list
 
 .glitter
 LDA #$05
-STA $17C0|!addr,Y
+STA $17C0|!addr,y
 LDA !sprite_x_low,x
-STA $17C8|!addr,Y
+STA $17C8|!addr,y
 LDA !sprite_y_low,x
-STA $17C4|!addr,Y
+STA $17C4|!addr,y
 LDA #$10
-STA $17CC|!addr,Y
+STA $17CC|!addr,y
 
 .shift_list
 ; shift the list left
@@ -147,7 +148,7 @@ LDX #0
 LDA !freeram,x
 BPL .add_loop_continue ; empty slots are $FF
 
-LDA $15E9
+LDA $15E9|!addr
 STA !freeram,x
 BRA .ret
 
@@ -158,9 +159,9 @@ BNE .add_loop
 
 ; no empty slots
 JSL despawn_first
-LDA $15E9
+LDA $15E9|!addr
 STA !freeram+!max_magics-1
 
 .ret:
-LDX $15E9
+LDX $15E9|!addr
 RTL
