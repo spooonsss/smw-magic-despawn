@@ -5,7 +5,7 @@
 
 !max_magics = 3
 assert !max_magics >= 3
-!freeram = $0F5E ; !max_magics bytes, cannot include bank
+!freeram = $18C5 ; !max_magics bytes, cannot include bank, must be cleared on level load for level UberASM
 !bank1_empty = $01FFFC ; 4 bytes
 
 ; end of configuration
@@ -141,6 +141,10 @@ PHA
 PHX
 PHY
 
+; if two slots are 0, the UberASM is not running for this level
+LDA !freeram
+ORA !freeram+1
+BEQ .ret
 
 ; store our sprite slot to the end of the !freeram list
 LDX #0
